@@ -1,16 +1,16 @@
 package com.awssupport.emrfilesystem;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.LocalFileSystem;
-import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.*;
 import org.apache.hadoop.hdfs.DistributedFileSystem;
 import org.apache.hadoop.mapreduce.Job;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class S3Operations {
 
@@ -25,10 +25,22 @@ public class S3Operations {
 
         String path=args[0];
         FileSystem fs = getEMRFSFileSystem();
-
-        FileStatus[] fileStatus = fs.listStatus(new Path(path));
+        Path s3path=new Path(path);
+        FileStatus[] fileStatus = fs.listStatus(s3path);
         for(FileStatus status : fileStatus){
             System.out.println(status.getPath().toString());
+
+        }
+
+        if(fs.exists(s3path)){
+            if(fs.isFile(s3path)){
+                FSDataInputStream  hourInputStream = fs.open(s3path);
+                List<String> previousHourList = new ArrayList();
+                previousHourList = IOUtils.readLines(hourInputStream, "UTF-8");
+                System.out.println("Header "+previousHourList.get(1));
+                System.out.println("Size "+previousHourList.size());
+                hourInputStream.close();
+            }
         }
 
     }
