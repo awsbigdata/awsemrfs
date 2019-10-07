@@ -8,4 +8,4 @@ how to read s3 filesystem using hadoop api
 3. copy the jar to emr master node
 4. run following commad to list the files.
 
-java -cp $(hadoop classpath):awsemrfs.jar com.awssupport.emrfilesystem.S3Operations <s3 path>
+java -cp $(hadoop classpath):awsemrfs.jar com.awssupport.emrfilesystem.S3Operations  `<s3 path>`
